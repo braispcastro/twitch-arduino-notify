@@ -1,14 +1,26 @@
-import pyfirmata, time, json
+import pyfirmata, time, json, twitchdata
 from twitch import twitch
 
 
-def get_twitch_user_id(access_token, username):
-    user_data = twitch_client.get_users(access_token, username)[0]
+def get_twitch_user_id(username):
+    user_data = twitch_client.get_users(access_token, [username])[0]
     return user_data['id']
 
 
+def get_streams_online(user_id):
+    follows_list = twitch_client.get_follows(access_token, user_id)
+    users_id = []
+    for item in follows_list:
+        users_id.append(item['to_id'])
+    online_list = twitch_client.get_streams(access_token, users_id)
+    result = []
+    for channel in online_list:
+        result.append(twitchdata.ToStreamData(channel))
+    return result
+
+
 # Find board
-board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
+# board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
 
 # Twitch secrets
 client_id = ''
@@ -20,12 +32,13 @@ with open('secret.json') as f:
 
 twitch_client = twitch(client_id, client_secret)
 access_token = twitch_client.authenticate()
-user_id = get_twitch_user_id(access_token, 'frankylift')
+user_id = get_twitch_user_id('frankylift')
+streams = get_streams_online(user_id)
+streams_last_update = time.localtime()
 
 
 while True:
-    # Placeholder blink
-    board.digital[13].write(1)
-    time.sleep(1)
-    board.digital[13].write(0)
-    time.sleep(1)
+    # Wait 5 minutos
+    time.sleep(300)
+    aux_streams = get_streams_online(user_id)
+    

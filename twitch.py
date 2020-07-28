@@ -45,6 +45,22 @@ class twitch:
 
         return json.loads(response.text)["data"]
 
+    def get_follows(self, access_token, user_id):
+        url = urllib.parse.urljoin(self.base_url, "users/follows")
+        headers = {
+            "Content-Type": "application/json",
+            "Client-ID": self.client_id,
+            "Authorization": f"Bearer {access_token}"
+        }
+        url = url + f"?first=100&from_id={user_id}"
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code != 200:
+            return None
+
+        return json.loads(response.text)["data"]
+
     def get_streams(self, access_token, users):
         url = urllib.parse.urljoin(self.base_url, "streams")
         headers = {
@@ -52,7 +68,7 @@ class twitch:
             "Client-ID": self.client_id,
             "Authorization": f"Bearer {access_token}"
         }
-        url = url + "?"
+        url = url + "?first=100&"
         for user in users:
             url = url + f"user_id={user}&"
 
@@ -70,7 +86,7 @@ class twitch:
             "Client-ID": self.client_id,
             "Authorization": f"Bearer {access_token}"
         }
-        url = url + "?"
+        url = url + "?first=100&"
         for game in games:
             url = url + f"id={game}&"
 
