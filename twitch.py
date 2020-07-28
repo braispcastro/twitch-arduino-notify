@@ -28,7 +28,7 @@ class twitch:
         return json.loads(response.text)["access_token"]
 
     def get_users(self, access_token, users):
-        url = urllib.parse.urljoin(self.baseUrl, "users")
+        url = urllib.parse.urljoin(self.base_url, "users")
         headers = {
             "Content-Type": "application/json",
             "Client-ID": self.client_id,
@@ -46,7 +46,7 @@ class twitch:
         return json.loads(response.text)["data"]
 
     def get_streams(self, access_token, users):
-        url = urllib.parse.urljoin(self.baseUrl, "streams")
+        url = urllib.parse.urljoin(self.base_url, "streams")
         headers = {
             "Content-Type": "application/json",
             "Client-ID": self.client_id,
@@ -64,7 +64,7 @@ class twitch:
         return json.loads(response.text)["data"]
 
     def get_games(self, access_token, games):
-        url = urllib.parse.urljoin(self.baseUrl, "games")
+        url = urllib.parse.urljoin(self.base_url, "games")
         headers = {
             "Content-Type": "application/json",
             "Client-ID": self.client_id,
