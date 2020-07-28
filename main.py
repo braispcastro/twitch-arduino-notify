@@ -7,8 +7,6 @@ def get_twitch_user_id(access_token, username):
     return user_data['id']
 
 
-
-
 # Find board
 board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
 
