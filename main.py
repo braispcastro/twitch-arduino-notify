@@ -1,5 +1,6 @@
-import pyfirmata, time, json, twitchdata
+import pyfirmata, json, time, twitchdata
 from twitch import twitch
+from datetime import datetime
 
 
 def get_twitch_user_id(username):
@@ -18,7 +19,7 @@ def get_streams_online(user_id):
         stream = twitchdata.ToStreamData(channel)
         if stream.type == 'live':
             result.append(stream)
-    return result
+    return [r.user_name for r in result]
 
 
 # Find board
@@ -38,11 +39,17 @@ twitch_client = twitch(client_id, client_secret)
 access_token = twitch_client.authenticate()
 user_id = get_twitch_user_id(twitch_username)
 streams = get_streams_online(user_id)
-streams_last_update = time.localtime()
 
 
+print('Starting loop...')
 while True:
-    # Wait 5 minutes
-    time.sleep(300)
+    # Wait 60 seconds
+    time.sleep(60)
     aux_streams = get_streams_online(user_id)
-    
+    new_online = set(aux_streams).difference(streams)
+    streams = aux_streams
+    str_now = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    if len(new_online) > 0:
+        print(f"[{str_now}] {new_online}")
+    else:
+        print(f"[{str_now}] None")
