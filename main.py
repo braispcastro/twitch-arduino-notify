@@ -46,25 +46,35 @@ with open('secret.json') as f:
     client_secret = secret['clientSecret']
     twitch_username = secret['twitchUsername']
 
+# Init twitch data
 twitch_client = twitch(client_id, client_secret)
 access_token = twitch_client.authenticate()
 user_id = get_twitch_user_id(twitch_username)
 streams = get_streams_online(user_id)
 
+# Data gathered
 alert_new_stream(['init', 'test', 'beep'])
 print('Starting loop...')
 
 while True:
     # Wait 60 seconds
     time.sleep(60)
+
+    # Led ON
     board.digital[led].write(1)
+
+    # Get channels online
     aux_streams = get_streams_online(user_id)
     new_online = set(aux_streams).difference(streams)
     streams = aux_streams
     str_now = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+
+    # Board logic
     if len(new_online) > 0:
         print(f"[{str_now}] {new_online}")
         alert_new_stream(new_online)
     else:
         print(f"[{str_now}] None")
+
+    # Led OFF
     board.digital[led].write(0)
