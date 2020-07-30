@@ -22,8 +22,18 @@ def get_streams_online(user_id):
     return [r.user_name for r in result]
 
 
+def alert_new_stream(new_online):
+    for x in range(len(new_online)):
+        board.digital[buzzer].write(1)
+        time.sleep(0.2)
+        board.digital[buzzer].write(0)
+        time.sleep(0.2)
+
+# Board objects
+buzzer = 2
+
 # Find board
-# board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
+board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
 
 # Twitch secrets
 client_id = ''
@@ -40,6 +50,7 @@ access_token = twitch_client.authenticate()
 user_id = get_twitch_user_id(twitch_username)
 streams = get_streams_online(user_id)
 
+alert_new_stream(['init_test', '2', '3'])
 
 print('Starting loop...')
 while True:
@@ -51,5 +62,6 @@ while True:
     str_now = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     if len(new_online) > 0:
         print(f"[{str_now}] {new_online}")
+        alert_new_stream(new_online)
     else:
         print(f"[{str_now}] None")
