@@ -51,8 +51,8 @@ user_id = get_twitch_user_id(twitch_username)
 streams = get_streams_online(user_id)
 
 alert_new_stream(['init_test', '2', '3'])
-
 print('Starting loop...')
+
 while True:
     # Wait 60 seconds
     time.sleep(60)
