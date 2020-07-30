@@ -31,6 +31,7 @@ def alert_new_stream(new_online):
 
 # Board objects
 buzzer = 2
+led = 4
 
 # Find board
 board = pyfirmata.Arduino('/dev/tty.usbmodem14101')
@@ -50,12 +51,13 @@ access_token = twitch_client.authenticate()
 user_id = get_twitch_user_id(twitch_username)
 streams = get_streams_online(user_id)
 
-alert_new_stream(['init_test', '2', '3'])
+alert_new_stream(['init', 'test', 'beep'])
 print('Starting loop...')
 
 while True:
     # Wait 60 seconds
     time.sleep(60)
+    board.digital[led].write(1)
     aux_streams = get_streams_online(user_id)
     new_online = set(aux_streams).difference(streams)
     streams = aux_streams
@@ -65,3 +67,4 @@ while True:
         alert_new_stream(new_online)
     else:
         print(f"[{str_now}] None")
+    board.digital[led].write(0)
