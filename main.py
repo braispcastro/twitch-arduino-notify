@@ -1,5 +1,5 @@
 import json, time, twitchdata
-from pymata4 import pymata4
+from pyfirmata import Arduino
 from twitch import twitch
 from datetime import datetime
 
@@ -25,9 +25,9 @@ def get_streams_online(user_id):
 
 def alert_new_stream(new_online):
     for x in range(len(new_online)):
-        board.digital_write(BUZZER, 1)
+        board.digital[BUZZER].write(1)
         time.sleep(0.2)
-        board.digital_write(BUZZER, 0)
+        board.digital[BUZZER].write(0)
         time.sleep(0.2)
 
 
@@ -37,16 +37,11 @@ def write_log(message):
 
 
 # Board objects
-LED_BUILTIN = 13
 BUZZER = 2
 LED = 4
 
 # Init board
-board = pymata4.Pymata4(com_port='/dev/tty.usbmodem14101')
-board.set_pin_mode_digital_output(LED)
-board.set_pin_mode_digital_output(BUZZER)
-board.set_pin_mode_digital_output(LED_BUILTIN)
-board.digital_write(LED_BUILTIN, 0)
+board = Arduino('/dev/tty.usbmodem14101')
 
 # Twitch secrets
 client_id = ''
@@ -73,7 +68,7 @@ while True:
     time.sleep(60)
 
     # Led ON
-    board.digital_write(LED, 1)
+    board.digital[LED].write(1)
 
     # Get channels online
     aux_streams = get_streams_online(user_id)
@@ -88,4 +83,4 @@ while True:
         write_log('None')
 
     # Led OFF
-    board.digital_write(LED, 0)
+    board.digital[LED].write(0)
